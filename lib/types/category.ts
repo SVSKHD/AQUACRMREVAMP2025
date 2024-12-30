@@ -1,9 +1,10 @@
 export interface Category {
   photos: any;
   id: string;
-  name: string;
+  title: string;
   description: string;
   image: string;
+  keywords:string;
   subCategories: SubCategory[];
   status: "active" | "inactive";
   totalProjects: number;
@@ -12,7 +13,7 @@ export interface Category {
 
 export interface SubCategory {
   id: string;
-  name: string;
+  title: string;
   description: string;
   image: string;
   status: "active" | "inactive";

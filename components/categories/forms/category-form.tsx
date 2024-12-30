@@ -27,13 +27,17 @@ import { FileUpload } from "@/components/ui/file-upload";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const formSchema = z.object({
-  name: z.string().min(2, {
+  title: z.string().min(2, {
     message: "Name must be at least 2 characters.",
+  }),
+  keywords: z.string().min(2, {
+    message: "Keywords must be at least 2 characters.",
   }),
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   }),
-  image: z.custom<File>()
+  image: z
+    .custom<File>()
     .refine((file) => file instanceof File, "Image is required.")
     .refine((file) => file.size <= MAX_FILE_SIZE, "Max file size is 5MB."),
   status: z.enum(["active", "inactive"]),
@@ -49,7 +53,8 @@ export function CategoryForm({ defaultValues, isEditing, onSuccess }: CategoryFo
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: defaultValues?.name || "",
+      title: defaultValues?.title || "",
+      keywords: defaultValues?.keywords || "",
       description: defaultValues?.description || "",
       status: defaultValues?.status || "active",
     },
@@ -67,12 +72,12 @@ export function CategoryForm({ defaultValues, isEditing, onSuccess }: CategoryFo
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="name"
+          name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input placeholder="Category name" {...field} />
+                <Input placeholder="Category title" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,15 +90,33 @@ export function CategoryForm({ defaultValues, isEditing, onSuccess }: CategoryFo
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Describe the category and its purpose" 
-                  {...field} 
+                <Textarea
+                  placeholder="Describe the category and its purpose"
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="keywords"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Keywords</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Describe the category keywords"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="image"
