@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-import { API_BASE_URL } from '../config/api';
+import { API_BASE_URL, API_BASE_OPERATIONS_URL } from '../config/api';
 import { store } from '../store/store';
 import { logout } from '../store/slices/authSlice';
 
@@ -55,3 +55,56 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Create an Axios instance for operations (e.g., products and categories)
+export const operationsApi = axios.create({
+  baseURL: API_BASE_OPERATIONS_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000,
+});
+
+// ----- REQUEST INTERCEPTOR -----
+operationsApi.interceptors.request.use(
+  (config: AxiosRequestConfig): AxiosRequestConfig => {
+    try {
+      // Attempt to read the token from localStorage
+      const tokenString: string | null = localStorage.getItem('token');
+      const formattedToken = tokenString?.replace(/^"|"$/g, "");
+      if (tokenString) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${formattedToken}`,
+        };
+      }
+    } catch (error) {
+      // Handle localStorage or JSON parsing errors
+      console.error('Error reading token from localStorage:', error);
+    }
+    return config;
+  },
+  (error: AxiosError) => {
+    // If something went wrong before sending the request
+    return Promise.reject(error);
+  }
+);
+
+// ----- RESPONSE INTERCEPTOR -----
+operationsApi.interceptors.response.use(
+  (response: AxiosResponse): AxiosResponse => {
+    // Return the response as is if successful
+    return response;
+  },
+  (error: AxiosError) => {
+    // Handle error responses globally
+    if (error.response?.status === 401) {
+      // Handle unauthorized responses
+      store.dispatch(logout());
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+    return Promise.reject(error);
+  }
+);
+

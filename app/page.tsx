@@ -19,6 +19,7 @@ export default function Home() {
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="sub-categories">Sub-Categories</TabsTrigger>
             <TabsTrigger value="culture">Culture</TabsTrigger>
+            <TabsTrigger value="online">Online Users</TabsTrigger>
           </TabsList>
           <TabsContent value="invoices">
             <InvoicesTab />

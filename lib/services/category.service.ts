@@ -1,11 +1,11 @@
-import { api } from './api';
+import { operationsApi, api } from './api';
 import { API_ENDPOINTS } from '../config/api';
 import { Category, SubCategory } from '@/lib/types/category';
 
 export const categoryService = {
   // Categories
   async getAllCategories() {
-    const response = await api.get(API_ENDPOINTS.CATEGORIES);
+    const response = await operationsApi.get(API_ENDPOINTS.CATEGORIES);
     return response.data;
   },
 
@@ -31,7 +31,7 @@ export const categoryService = {
 
   // Sub-Categories
   async getAllSubCategories() {
-    const response = await api.get(API_ENDPOINTS.SUB_CATEGORIES);
+    const response = await operationsApi.get(API_ENDPOINTS.SUB_CATEGORIES);
     return response.data;
   },
 
